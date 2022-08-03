@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "44d6d752-3bf7-4a29-80d0-6030647be03c": {
+      "ProjectGuid": "44d6d752-3bf7-4a29-80d0-6030647be03c",
+      "DisplayName": "Mood",
+      "ColorIndex": 0
+    },
+    "98fbb889-a7bc-4c1a-bf38-6f4d30f7790d": {
+      "ProjectGuid": "98fbb889-a7bc-4c1a-bf38-6f4d30f7790d",
+      "DisplayName": "Webbanhang",
+      "ColorIndex": 1
+    },
+    "b120f73c-78b8-42c1-adab-179912b7e6c0": {
+      "ProjectGuid": "b120f73c-78b8-42c1-adab-179912b7e6c0",
+      "DisplayName": "CommomSentMail",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}
