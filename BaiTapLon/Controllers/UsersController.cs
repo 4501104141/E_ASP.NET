@@ -163,6 +163,7 @@ namespace BaiTapLon.Controllers
         }
         public ActionResult ProfileUser()
         {
+            ViewBag.title = "Thông tin người dùng";
             var userProfile = (UserLogin)Session[Common.Constant.USER_SESSION];
             
             if (userProfile != null)

@@ -31,6 +31,7 @@ namespace BaiTapLon.Controllers
             ViewBag.NoiBat = product.listSanphamnew(12);
             ViewBag.listGoiY = product.listSanphamnew(5);
             ViewBag.topSelling = product.listTopSellings(20);
+            ViewBag.title = "Trang chủ";
             var listTabCategory = product.listAllCategoreProduct();
             List<long> ListidCate = new List<long>();
             foreach (var item in listTabCategory)

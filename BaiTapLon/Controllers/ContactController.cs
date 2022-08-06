@@ -16,7 +16,8 @@ namespace BaiTapLon.Controllers
         {
             var draw = new ContactDraw().getActiveContent();
             var sessionUser = (UserLogin)Session[Constant.USER_SESSION];
-            if(sessionUser!=null)
+            ViewBag.title = "Liên hệ";
+            if (sessionUser!=null)
             {
                 var userLogin = new UserDraw().getByIDLogin(sessionUser.userId);
                 ViewBag.LoginUser = userLogin;

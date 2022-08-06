@@ -11,6 +11,7 @@ namespace BaiTapLon.Controllers
         // GET: AboutUs
         public ActionResult Index()
         {
+            ViewBag.title = "Thông tin về chúng tôi";
             return View();
         }
     }
