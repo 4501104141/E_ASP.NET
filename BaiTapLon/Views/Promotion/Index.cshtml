@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Khuyến mãi";
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 }
 @section jsFooter{
@@ -29,6 +29,21 @@
                 body.querySelector('#flipdown').classList.toggle('flipdown__theme-dark');
             }, 5000);
         });
+
+
+        const menuLinks = document.querySelectorAll('.nav-link.menu-link')
+
+        menuLinks.forEach(menuLink => {
+            
+               if (menuLink.getAttribute('href').toLowerCase() === window.location.pathname.toLowerCase()) {
+                menuLink.classList.add('border-bottom', 'border-primary', 'border-width-2')
+            } else {
+                menuLink.classList.remove('border-bottom', 'border-primary', 'border-width-2')
+                
+            }
+           
+        })
+        console.dir(menuLinks)
     </script>
     }
 <!-- ====== MAIN CONTENT ===== -->

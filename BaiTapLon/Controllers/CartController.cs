@@ -28,6 +28,7 @@ namespace BaiTapLon.Controllers
            
             var list = new List<CartItem>();
             ViewBag.totalProduct = 0;
+            ViewBag.title = "Giỏ hàng";
             if (cart != null)
             {
                 list = (List<CartItem>)cart;

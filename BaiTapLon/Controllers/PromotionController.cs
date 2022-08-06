@@ -11,6 +11,7 @@ namespace BaiTapLon.Controllers
         // GET: Promotion
         public ActionResult Index()
         {
+            ViewBag.title = "Khuyến mãi";
             return View();
         }
     }

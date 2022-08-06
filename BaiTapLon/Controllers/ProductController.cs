@@ -13,6 +13,7 @@ namespace BaiTapLon.Controllers
         // GET: Product
         public ActionResult Index()
         {
+            ViewBag.title = "Sản phẩm";
             return View();
         }
         [ChildActionOnly]
