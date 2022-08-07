@@ -3,6 +3,11 @@
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
     var category = (Mood.EF2.Category)ViewBag.sanPhamCategory;
     var splienquan = (List<Mood.EF2.Sanpham>)ViewBag.sanPhamLienquan;
+    ViewBag.title = Model.Name;
+    ViewBag.seoTitle = Model.Name;
+    ViewBag.seoDescription = Model.Mota;
+    ViewBag.seoImage = Model.Images;
+    ViewBag.seoUrl = Request.Url.ToString();
 }
 @if (Model != null)
 {
