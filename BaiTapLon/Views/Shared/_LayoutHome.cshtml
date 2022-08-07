@@ -1,11 +1,21 @@
-﻿
+﻿@{
+    var seoDescription = ViewBag.seoDescription != null ? ViewBag.seoDescription : "Đến với không gian mua sắm trực tuyến raucuquasachstore, khách hàng có thể dễ dàng tìm thấy những sản phẩm hay, đa Loại Sản Phẩm của nhiều nhà sản xuất, công ty sản phẩm trong và ngoài nước cùng nhiều sản phẩm tốt của những thương hiệu uy tín. Cùng tiêu chí không ngừng hoàn thiện, nâng cao chất lượng sản phẩm, dịch vụ, Hiệu sản phẩm cam kết mang đến cho khách hàng trải nghiệm mua sắm trực tuyến an toàn, tiện lợi: cách đặt hàng đơn giản, phương thức thanh toán đa dạng, dịch vụ chăm sóc khách hàng tận tình, chu đáo.";
+    var seoImage = ViewBag.seoImage != null ? ViewBag.seoImage : "~/assets/img/imgbook/logo-mana-food-ok.png";
+    var seoTitle = ViewBag.seoTitle != null ? ViewBag.seoTitle : "Siêu thị thực phẩm sạch online Emana Food";
+    //TODO: replace url with domain later
+    var seoUrl = ViewBag.seoUrl != null ? ViewBag.seoUrl : "https://google.com";
+
+
+}
+
+
 <!DOCTYPE html>
 
 <html>
 <head>
-    
+
     <title>@ViewBag.title</title>
-  
+
     <!-- Required Meta Tags Always Come First -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -27,6 +37,33 @@
 
     <!-- CSS Bookworm Template -->
     <link rel="stylesheet" href="/assets/css/theme.css">
+
+    <link rel="shortcut icon" href="~/Content/images/fav.png" type="image/x-icon" />
+    <link rel="icon" href="~/Content/images/fav.png" " type="image/x-icon" />
+    <!-- Responsive -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="SKYPE_TOOLBAR" content="SKYPE_TOOLBAR_PARSER_COMPATIBLE" />
+    <meta name="description" content=@seoDescription />
+
+    <!-- Google / Search Engine Tags -->
+    <meta itemprop="name" content=@seoTitle />
+    <meta itemprop="description" content=@seoDescription />
+    <meta itemprop="image" content=@seoImage />
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content=@seoUrl />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content=@seoTitle />
+    <meta property="og:description" content=@seoDescription />
+    <meta property="og:image" content=@seoImage />
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content=@seoUrl />
+    <meta name="twitter:title" content=@seoTitle />
+    <meta name="twitter:description" content=@seoDescription />
+    <meta name="twitter:image" content=@seoImage />
+
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7Z3VX694CQ"></script>
     <script>
