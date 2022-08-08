@@ -14,6 +14,7 @@ using BaiTapLon.MoMo_API;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using API_NganLuong;
+using BaiTapLon.VN_PAY;
 
 namespace BaiTapLon.Controllers
 {
@@ -25,7 +26,7 @@ namespace BaiTapLon.Controllers
         public ActionResult Index()
         {
             var cart = Session[CartSession];
-           
+
             var list = new List<CartItem>();
             ViewBag.totalProduct = 0;
             ViewBag.title = "Giỏ hàng";
@@ -62,7 +63,7 @@ namespace BaiTapLon.Controllers
                         }
                     }
                     var cartCount1 = list.Count();
-                   
+
                     return Json(
                         new
                         {
@@ -70,7 +71,7 @@ namespace BaiTapLon.Controllers
                         }
                         , JsonRequestBehavior.AllowGet);
                 }
-                
+
                 else
                 {
                     //Chưa có sản phẩm như z trong giỏ.
@@ -82,7 +83,7 @@ namespace BaiTapLon.Controllers
                     item.countCart = list.Count();
                     var cartCount1 = list.Count();
                     //Gán vào session
-                    
+
                     return Json(
                         new
                         {
@@ -91,9 +92,9 @@ namespace BaiTapLon.Controllers
                         , JsonRequestBehavior.AllowGet);
 
                 }
-                
+
             }
-            
+
             else
             {
                 //Tạo mới đối tượng cart item
@@ -102,13 +103,13 @@ namespace BaiTapLon.Controllers
                 item.Quantity = quantity;
                 item.countCart = 1;
                 var list = new List<CartItem>();
-                
+
                 list.Add(item);
                 //Gán vào session
                 Session[CartSession] = list;
 
             }
-            
+
             return Json(
                  new
                  {
@@ -116,10 +117,10 @@ namespace BaiTapLon.Controllers
                  }
                 , JsonRequestBehavior.AllowGet);
 
-            
+
         }
-        
-       
+
+
         public JsonResult Update(string cartModel)
         {
             var jsonCart = new JavaScriptSerializer().Deserialize<List<CartItem>>(cartModel);
@@ -382,6 +383,47 @@ namespace BaiTapLon.Controllers
                                 return View("cancel_order");
                             }
                         }
+
+                        //Neu Thanh Toán VNPAY
+                        else if (payment_method.Equals("VNPAY"))
+                        {
+                            Session[OrderIDDel] = null;
+                            string str_bankcode = Request["bankcode"];
+                            RequestInfo info = new RequestInfo();
+                            info.Merchant_id = nganluongInfo.Merchant_id;
+                            info.Merchant_password = nganluongInfo.Merchant_password;
+                            info.Receiver_email = nganluongInfo.Receiver_email;
+                            info.cur_code = "vnd";
+                            info.bank_code = str_bankcode;
+                            info.Order_code = orderCode;
+                            info.Total_amount = sumOrder;
+                            info.fee_shipping = "0";
+                            info.Discount_amount = "0";
+                            info.order_description = "Thanh toán VNPAY cho đơn hàng";
+                            info.return_url = nganluongInfo.return_url;
+                            info.cancel_url = nganluongInfo.cancel_url;
+                            info.Buyer_fullname = shipName;
+                            info.Buyer_email = shipMail;
+                            info.Buyer_mobile = shipMobile;
+
+
+                            return PayWithVNPay(int.Parse(sumOrder), shipName, shipAddress, shipMobile, shipMail, payment_method, orderCode);
+                            //ServicePointManager.Expect100Continue = true;
+                            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                            //APICheckoutV3 objNLChecout = new APICheckoutV3();
+                            //ResponseInfo result = objNLChecout.GetUrlCheckout(info, payment_method);
+                            //// neu khong gap loi gi
+                            //if (result.Error_code == "00")
+                            //{
+                            //    var resultNL = saveOrder(shipName, shipAddress, shipMobile, shipMail, payment_method, orderCode);
+                            //    Session[OrderIDDel] = orderCode;
+                            //    return Redirect(result.Checkout_url);
+                            //}
+                            //else
+                            //{
+                            //    return View("cancel_order");
+                            //}
+                        }
                     }
                 }
                 else
@@ -395,7 +437,7 @@ namespace BaiTapLon.Controllers
         }
         public ActionResult Success(Orders OrderInfo)
         {
-            
+
             return View(OrderInfo);
 
         }
@@ -425,7 +467,7 @@ namespace BaiTapLon.Controllers
             }
             if (result.errorCode == "00")
             {
-                
+
                 var OrderInfo = new OrderDraw().getOrderByOrderCode(result.order_code);//db.Orders.Where(m => m.Code == orderId).FirstOrDefault();
                 var order_detail = new OrderDraw().getProductByOrder_Details(OrderInfo.IDOder);
                 foreach (var item in order_detail)
@@ -442,10 +484,10 @@ namespace BaiTapLon.Controllers
             }
             else
             {
-               
+
                 ViewBag.status = false;
-                
-                
+
+
             }
             return View("confirm_orderPaymentOnline");
         }
@@ -469,11 +511,11 @@ namespace BaiTapLon.Controllers
             }
             if (errorCode == "0")
             {
-                
+
                 var OrderInfo = new OrderDraw().getOrderByOrderCode(oderCode);//db.Orders.Where(m => m.Code == orderId).FirstOrDefault();
                 var order_detail = new OrderDraw().getProductByOrder_Details(OrderInfo.IDOder);
 
-                foreach(var item in order_detail)
+                foreach (var item in order_detail)
                 {
                     new SanphamDraw().UpdateTonKho(item.ProductID, (int)item.Quanlity);
                 }
@@ -485,18 +527,18 @@ namespace BaiTapLon.Controllers
                 Session["CartSession"] = null;
                 return View("oderComplete", OrderInfo);
             }
-            
+
             else
             {
-                
+
                 ViewBag.status = false;
                 return View("cancel_order_momo");
             }
 
-          
+
         }
-        
-        public bool saveOrder(string shipName, string shipAddress, string shipMobile, string shipMail,string payment_method,string oderCode)
+
+        public bool saveOrder(string shipName, string shipAddress, string shipMobile, string shipMail, string payment_method, string oderCode)
         {
 
             var userSession = (UserLogin)Session[Common.Constant.USER_SESSION];
@@ -514,12 +556,12 @@ namespace BaiTapLon.Controllers
             order.Status = 0;
             order.NhanHang = 0;
             order.GiaoHang = 0;
-            if(payment_method.Equals("MOMO"))
+            if (payment_method.Equals("MOMO"))
             {
                 order.DeliveryPaymentMethod = "Cổng thanh toán momo";
                 order.OrderCode = oderCode;
             }
-            if(payment_method.Equals("COD"))
+            if (payment_method.Equals("COD"))
             {
                 order.DeliveryPaymentMethod = "COD";
                 order.OrderCode = oderCode;
@@ -532,6 +574,11 @@ namespace BaiTapLon.Controllers
             if (payment_method.Equals("NL"))
             {
                 order.DeliveryPaymentMethod = "Ngân Lượng";
+                order.OrderCode = oderCode;
+            }
+            if (payment_method.Equals("VNPAY"))
+            {
+                order.DeliveryPaymentMethod = "VN Pay";
                 order.OrderCode = oderCode;
             }
             order.StatusPayment = 2;
@@ -586,7 +633,7 @@ namespace BaiTapLon.Controllers
                     return true;
                 }
                 */
-                
+
                 return true;
             }
             catch (Exception)
@@ -609,7 +656,7 @@ namespace BaiTapLon.Controllers
 
         public ActionResult cancel_order()
         {
-            if(Session[OrderIDDel] != null)
+            if (Session[OrderIDDel] != null)
             {
                 string orderCode = Session[OrderIDDel].ToString();
                 var OrderInfo = new OrderDraw().getOrderByOrderCode(orderCode);//db.Orders.Where(m => m.Code == orderId).FirstOrDefault();                                                        //OrderInfo.StatusPayment = 0;//huy thanh toán
@@ -619,5 +666,124 @@ namespace BaiTapLon.Controllers
             }
             return View();
         }
+
+        public ActionResult PayWithVNPay(int totalAmount, String shipName, String shipAddress, String shipMobile, String shipMail, String payment_method, String orderCode)
+        {
+            string url = ConfigurationManager.AppSettings["Url"];
+            string returnUrl =
+                ConfigurationManager.AppSettings["ReturnUrl"] +
+                "?shipName=" + shipName +
+                "&shipAddress=" + shipAddress +
+                "&shipMail=" + shipMail +
+                "&payment_method=" + payment_method +
+                "&orderCode=" + orderCode +
+                "&sum=" + totalAmount
+                ;
+
+            string tmnCode = ConfigurationManager.AppSettings["TmnCode"];
+            string hashSecret = ConfigurationManager.AppSettings["HashSecret"];
+
+            PayLib pay = new PayLib();
+
+            pay.AddRequestData("vnp_Version", "2.0.0"); //Phiên bản api mà merchant kết nối. Phiên bản hiện tại là 2.0.0
+            pay.AddRequestData("vnp_Command", "pay"); //Mã API sử dụng, mã cho giao dịch thanh toán là 'pay'
+            pay.AddRequestData("vnp_TmnCode", tmnCode); //Mã website của merchant trên hệ thống của VNPAY (khi đăng ký tài khoản sẽ có trong mail VNPAY gửi về)
+            pay.AddRequestData("vnp_Amount", (totalAmount * 100).ToString()); //số tiền cần thanh toán, công thức: số tiền * 100 - ví dụ 10.000 (mười nghìn đồng) --> 1000000
+            pay.AddRequestData("vnp_BankCode", ""); //Mã Ngân hàng thanh toán (tham khảo: https://sandbox.vnpayment.vn/apis/danh-sach-ngan-hang/), có thể để trống, người dùng có thể chọn trên cổng thanh toán VNPAY
+            pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss")); //ngày thanh toán theo định dạng yyyyMMddHHmmss
+            pay.AddRequestData("vnp_CurrCode", "VND"); //Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ VND
+            pay.AddRequestData("vnp_IpAddr", Util.GetIpAddress()); //Địa chỉ IP của khách hàng thực hiện giao dịch
+            pay.AddRequestData("vnp_Locale", "vn"); //Ngôn ngữ giao diện hiển thị - Tiếng Việt (vn), Tiếng Anh (en)
+            pay.AddRequestData("vnp_OrderInfo", "Thanh toan don hang"); //Thông tin mô tả nội dung thanh toán
+            pay.AddRequestData("vnp_OrderType", "other"); //topup: Nạp tiền điện thoại - billpayment: Thanh toán hóa đơn - fashion: Thời trang - other: Thanh toán trực tuyến
+            pay.AddRequestData("vnp_ReturnUrl", returnUrl); //URL thông báo kết quả giao dịch khi Khách hàng kết thúc thanh toán
+            pay.AddRequestData("vnp_TxnRef", DateTime.Now.Ticks.ToString()); //mã hóa đơn
+
+            string paymentUrl = pay.CreateRequestUrl(url, hashSecret);
+
+            return Redirect(paymentUrl);
+        }
+
+        public ActionResult VNPayResult()
+        {
+            if (Request.QueryString.Count > 0)
+            {
+                string hashSecret = ConfigurationManager.AppSettings["HashSecret"]; //Chuỗi bí mật
+                var vnpayData = Request.QueryString;
+                PayLib pay = new PayLib();
+
+                //lấy toàn bộ dữ liệu được trả về
+                foreach (string s in vnpayData)
+                {
+                    if (!string.IsNullOrEmpty(s) && s.StartsWith("vnp_"))
+                    {
+                        pay.AddResponseData(s, vnpayData[s]);
+                    }
+                }
+
+                long orderId = Convert.ToInt64(pay.GetResponseData("vnp_TxnRef")); //mã hóa đơn
+                long vnpayTranId = Convert.ToInt64(pay.GetResponseData("vnp_TransactionNo")); //mã giao dịch tại hệ thống VNPAY
+                string vnp_ResponseCode = pay.GetResponseData("vnp_ResponseCode"); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
+                string vnp_SecureHash = Request.QueryString["vnp_SecureHash"]; //hash của dữ liệu trả về
+                string shipName = Request.QueryString["shipName"];
+                string shipAddress = Request.QueryString["shipAddress"];
+                string shipMobile = Request.QueryString["shipMobile"];
+                string shipMail = Request.QueryString["shipMail"];
+                string payment_method = Request.QueryString["payment_method"];
+                string orderCode = Request.QueryString["orderCode"];
+                int sum = int.Parse(Request.QueryString["sum"]);
+
+                bool checkSignature = pay.ValidateSignature(vnp_SecureHash, hashSecret); //check chữ ký đúng hay không?
+
+                if (checkSignature)
+                {
+                    if (vnp_ResponseCode == "00")
+                    {
+                        bool resultOrder = saveOrder(shipName, shipAddress, shipMobile, shipMail, payment_method, orderCode);
+                        Session[OrderIDDel] = orderCode;
+                    
+                        if (resultOrder)
+                        {
+                            var list = new List<CartItem>();
+                            var cart = Session[CartSession];
+                            if (cart != null)
+                            {
+                                list = (List<CartItem>)cart;
+                                ViewBag.listCart = list;
+                            }
+                            var OrderInfo = new OrderDraw().getOrderByOrderCode(orderCode);//db.Orders.Where(m => m.Code == orderId).FirstOrDefault();
+                            ViewBag.paymentStatus = OrderInfo.StatusPayment;
+                            ViewBag.Methodpayment = OrderInfo.DeliveryPaymentMethod;
+                            ViewBag.Sum = sum;
+                            Session[CartSession] = null;
+                            return View("oderComplete", OrderInfo);
+
+                        }
+                        else
+                        {
+                            return Redirect("/loi-thanh-toan");
+                        }
+                    }
+                    else
+                    {
+                        //Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
+                        ViewBag.Message = "Có lỗi xảy ra trong quá trình xử lý hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId + " | Mã lỗi: " + vnp_ResponseCode;
+                        return Redirect("/loi-thanh-toan");
+                    }
+                }
+                else
+                {
+                    ViewBag.Message = "Có lỗi xảy ra trong quá trình xử lý";
+                    return Redirect("/loi-thanh-toan");
+                }
+
+            }
+            return Redirect("/loi-thanh-toan");
+
+            //return View();
+
+        }
+
     }
 }
+

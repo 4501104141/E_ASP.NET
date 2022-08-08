@@ -36,8 +36,8 @@
 }
 <br />
 @section jsFooter{
-<link href="~/Content/libs/toastr/toastr.css" rel="stylesheet" />
-<script src="~/Content/libs/commonjs/dongGoiController.js"></script>
+    <link href="~/Content/libs/toastr/toastr.css" rel="stylesheet" />
+    <script src="~/Content/libs/commonjs/dongGoiController.js"></script>
 
 }
 <ul class="bs4-order-tracking">
@@ -68,7 +68,7 @@
             <th>Ngày Tạo</th>
             <th>Phương Thức</th>
             <th>Trạng Thái</th>
-            
+
             <th>Đóng Gói</th>
             <th>Hành động</th>
         </tr>
@@ -98,6 +98,10 @@
                     {
                         <div class="text-info">Ngân lượng</div>
                     }
+                    else if (item.DeliveryPaymentMethod.Equals("VN Pay"))
+                    {
+                        <div class="text-info">VN Pay</div>
+                    }
                     else
                     {
                         <div class="text-danger">MOMO</div>
@@ -113,7 +117,7 @@
 
                 </td>
 
-               
+
                 <td><a href="/Admin/HoaDon/Details/@item.IDOder" class="badge badge-info"> Đóng Gói </a></td>
 
                 <td>
@@ -146,5 +150,3 @@
         <a href="/Admin/User/Create" class="btn btn-success">Thêm người dùng</a>
     </div>
 </div>  -->
-
-

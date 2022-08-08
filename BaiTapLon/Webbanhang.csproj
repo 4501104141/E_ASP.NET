@@ -394,6 +394,9 @@
     <Compile Include="NganLuongAPI\nganluongInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="VN_Pay\PayCompare.cs" />
+    <Compile Include="VN_Pay\PayLib.cs" />
+    <Compile Include="VN_Pay\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\css\cssNganLuong.css" />
@@ -409,6 +412,7 @@
     <Content Include="assets\img\324x38\img1.png" />
     <Content Include="assets\img\900x506\img1.jpg" />
     <Content Include="assets\img\favicon.png" />
+    <Content Include="assets\img\imgbook\ic_vnpay.jpg" />
     <Content Include="assets\img\imgbook\logo-mana-food-ok.png" />
     <Content Include="assets\img\imgbook\banks.PNG" />
     <Content Include="assets\img\imgbook\cod.PNG" />
@@ -3191,6 +3195,7 @@
     <Content Include="Views\Promotion\Index.cshtml" />
     <Content Include="Views\Product\CategoryMobile.cshtml" />
     <Content Include="Views\Cart\cancel_order.cshtml" />
+    <Content Include="Views\Cart\VNPayResult.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
